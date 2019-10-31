@@ -1,0 +1,10 @@
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/1.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/2.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/3.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/4.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/5.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/6.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/7.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/8.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/9.csv' WITH (FORMAT CSV,HEADER TRUE);
+COPY events(customer_id,event_type,country,browser,device_id,session_id) FROM '/tmp/data/10.csv' WITH (FORMAT CSV,HEADER TRUE);

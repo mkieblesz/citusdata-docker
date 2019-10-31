@@ -1,35 +1,25 @@
-FROM postgres:11.4
-ARG VERSION=8.3.2
-LABEL maintainer="Citus Data https://citusdata.com" \
-      org.label-schema.name="Citus" \
-      org.label-schema.description="Scalable PostgreSQL for multi-tenant and real-time workloads" \
-      org.label-schema.url="https://www.citusdata.com" \
-      org.label-schema.vcs-url="https://github.com/citusdata/citus" \
-      org.label-schema.vendor="Citus Data, Inc." \
-      org.label-schema.version=${VERSION} \
-      org.label-schema.schema-version="1.0"
+FROM citusdata/citus:8.3.2
 
-ENV CITUS_VERSION ${VERSION}.citus-1
+ENV DEBIAN_FRONTEND "noninteractive"
 
-# install Citus
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       ca-certificates \
-       curl \
-    && curl -s https://install.citusdata.com/community/deb.sh | bash \
-    && apt-get install -y postgresql-$PG_MAJOR-citus-8.3=$CITUS_VERSION \
-                          postgresql-$PG_MAJOR-hll=2.12.citus-1 \
-                          postgresql-$PG_MAJOR-topn=2.2.0 \
-    && apt-get purge -y --auto-remove curl \
-    && rm -rf /var/lib/apt/lists/*
+# install requirements
+RUN apt-get update && \
+    apt-get install -y apt-utils wget curl ca-certificates build-essential unzip postgresql-server-dev-11
 
-# add citus to default PostgreSQL config
-RUN echo "shared_preload_libraries='citus'" >> /usr/share/postgresql/postgresql.conf.sample
+# install Partman
+RUN wget https://github.com/pgpartman/pg_partman/archive/v4.2.2.zip -O 4.2.2.zip && \
+    unzip 4.2.2.zip && \
+    cd /pg_partman-4.2.2 && pwd && make install && \
+    echo "shared_preload_libraries = 'pg_partman_bgw'" >> $PGDATA/postgresql.conf
+
+# install postgresql-hll
+RUN wget https://github.com/citusdata/postgresql-hll/archive/v2.12.zip -O 2.12.zip && \
+    unzip 2.12.zip && \
+    cd /postgresql-hll-2.12 && pwd && make install
 
 # add scripts to run after initdb
-COPY 000-configure-stats.sh 001-create-citus-extension.sql /docker-entrypoint-initdb.d/
+COPY docker-entrypoint-initdb.d/* /docker-entrypoint-initdb.d/
 
-# add health check script
-COPY pg_healthcheck /
-
-HEALTHCHECK --interval=4s --start-period=6s CMD ./pg_healthcheck
+# cleanup
+# RUN apt-get purge -y --auto-remove curl wget && \
+#     rm -rf /var/lib/apt/lists/*
